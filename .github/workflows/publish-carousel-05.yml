@@ -1,0 +1,113 @@
+name: Publish Carousel 05 — gemini-31-pro
+
+on:
+  schedule:
+    - cron: '0 18 25 3 *'
+  workflow_dispatch:  # permite correr manualmente
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Info
+        run: echo "🎠 A publicar carousel-05-gemini-31-pro — 25 Mar 18h"
+
+      - name: Container slide-01
+        id: container01
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-01.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Container slide-02
+        id: container02
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-02.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Container slide-03
+        id: container03
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-03.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Container slide-04
+        id: container04
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-04.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Container slide-05
+        id: container05
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-05.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Container slide-06
+        id: container06
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-06.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Container slide-07
+        id: container07
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-07.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Pausa após containers
+        run: sleep 5
+
+      - name: Criar e publicar carousel
+        run: |
+          CAPTION=$(cat << 'CAPTIONEOF'
+O Google acabou de lançar o Gemini 3.1 Pro — e não aumentou o preço.
+
+94.3% no GPQA Diamond. 13 de 16 benchmarks ganhos. Mesmo preço do modelo anterior.
+
+A guerra entre Google, Anthropic e OpenAI está a beneficiar quem usa IA no trabalho:
+→ Mais performance pelo mesmo custo
+→ Preços a descer trimestre a trimestre
+→ Modelos especializados para cada caso de uso
+
+Desliza para ver a comparação completa — e o guia rápido de quando usar cada modelo.
+
+Guarda este carousel — vais precisar disto quando escolheres o próximo modelo.
+#IA #Gemini #GoogleAI #AItools #EterGrowth #InovacaoDigital #LLM
+CAPTIONEOF
+)
+          CHILDREN="${{ steps.container01.outputs.id }},${{ steps.container02.outputs.id }},${{ steps.container03.outputs.id }},${{ steps.container04.outputs.id }},${{ steps.container05.outputs.id }},${{ steps.container06.outputs.id }},${{ steps.container07.outputs.id }}"
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "media_type=CAROUSEL" \
+            --data-urlencode "children=$CHILDREN" \
+            --data-urlencode "caption=$CAPTION" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          CONTAINER_ID=$(echo $RESULT | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+          echo "Container ID: $CONTAINER_ID"
+          sleep 5
+          PUBLISH=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media_publish" \
+            --data-urlencode "creation_id=$CONTAINER_ID" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          POST_ID=$(echo $PUBLISH | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+          echo "✅ Publicado! Post ID: $POST_ID"
+          echo "🔗 https://www.instagram.com/p/$POST_ID/"
