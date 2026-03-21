@@ -1,0 +1,112 @@
+name: Publish Carousel 07 — oracle-block-empregos
+
+on:
+  schedule:
+    - cron: '0 18 27 3 *'
+  workflow_dispatch:  # permite correr manualmente
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Info
+        run: echo "🎠 A publicar carousel-07-oracle-block-empregos — 27 Mar 18h"
+
+      - name: Container slide-01
+        id: container01
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-07-oracle-block-empregos/slide-01.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Container slide-02
+        id: container02
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-07-oracle-block-empregos/slide-02.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Container slide-03
+        id: container03
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-07-oracle-block-empregos/slide-03.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Container slide-04
+        id: container04
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-07-oracle-block-empregos/slide-04.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Container slide-05
+        id: container05
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-07-oracle-block-empregos/slide-05.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Container slide-06
+        id: container06
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-07-oracle-block-empregos/slide-06.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Container slide-07
+        id: container07
+        run: |
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-07-oracle-block-empregos/slide-07.jpg" \
+            --data-urlencode "is_carousel_item=true" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
+          sleep 1
+      - name: Pausa após containers
+        run: sleep 5
+
+      - name: Criar e publicar carousel
+        run: |
+          CAPTION=$(cat << 'CAPTIONEOF'
+Oracle cortou 20.000–30.000 postos de trabalho para libertar $10 mil milhões para infraestrutura de IA.
+
+Jack Dorsey, CEO do Block, eliminou 4.000+ empregos com uma justificação directa: "equipas pequenas com IA superam equipas grandes sem IA."
+
+Isto é novo. Não é reestruturação. É a primeira vez que grandes corporações usam IA como justificação pública explícita para cortes em larga escala.
+
+O que muda para quem trabalha em tecnologia?
+
+Desliza para perceber o padrão — e o que fazer a seguir. →
+
+Qual é a função da tua área que achas que vai mudar mais com IA? Comenta abaixo.
+#InteligenciaArtificial #Oracle #FuturodoTrabalho #IA #Automação #EterGrowth #CarreiraTech
+CAPTIONEOF
+)
+          CHILDREN="${{ steps.container01.outputs.id }},${{ steps.container02.outputs.id }},${{ steps.container03.outputs.id }},${{ steps.container04.outputs.id }},${{ steps.container05.outputs.id }},${{ steps.container06.outputs.id }},${{ steps.container07.outputs.id }}"
+          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
+            --data-urlencode "media_type=CAROUSEL" \
+            --data-urlencode "children=$CHILDREN" \
+            --data-urlencode "caption=$CAPTION" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          CONTAINER_ID=$(echo $RESULT | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+          echo "Container ID: $CONTAINER_ID"
+          sleep 5
+          PUBLISH=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media_publish" \
+            --data-urlencode "creation_id=$CONTAINER_ID" \
+            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
+          POST_ID=$(echo $PUBLISH | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+          echo "✅ Publicado! Post ID: $POST_ID"
+          echo "🔗 https://www.instagram.com/p/$POST_ID/"
