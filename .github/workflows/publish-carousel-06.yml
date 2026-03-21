@@ -1,121 +1,62 @@
-name: Publish Carousel 06 — ia-produtividade-salario
+name: Publish Carousel 06 - ia-produtividade-salario
 
 on:
   schedule:
-    - cron: '0 18 26 3 *'
-  workflow_dispatch:  # permite correr manualmente
+    - cron: "0 18 26 3 *"
+  workflow_dispatch:
 
 jobs:
   publish:
     runs-on: ubuntu-latest
     steps:
-      - name: Info
-        run: echo "🎠 A publicar carousel-06-ia-produtividade-salario — 26 Mar 18h"
+      - name: Checkout
+        uses: actions/checkout@v4
 
-      - name: Container slide-01
-        id: container01
+      - name: Publish carousel to Instagram
+        env:
+          IG_TOKEN: ${{ secrets.INSTAGRAM_TOKEN }}
+          IG_USER: ${{ secrets.INSTAGRAM_USER_ID }}
         run: |
-          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
-            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-01.jpg" \
-            --data-urlencode "is_carousel_item=true" \
-            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
-          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
-          sleep 1
-      - name: Container slide-02
-        id: container02
-        run: |
-          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
-            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-02.jpg" \
-            --data-urlencode "is_carousel_item=true" \
-            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
-          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
-          sleep 1
-      - name: Container slide-03
-        id: container03
-        run: |
-          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
-            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-03.jpg" \
-            --data-urlencode "is_carousel_item=true" \
-            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
-          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
-          sleep 1
-      - name: Container slide-04
-        id: container04
-        run: |
-          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
-            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-04.jpg" \
-            --data-urlencode "is_carousel_item=true" \
-            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
-          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
-          sleep 1
-      - name: Container slide-05
-        id: container05
-        run: |
-          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
-            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-05.jpg" \
-            --data-urlencode "is_carousel_item=true" \
-            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
-          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
-          sleep 1
-      - name: Container slide-06
-        id: container06
-        run: |
-          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
-            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-06.jpg" \
-            --data-urlencode "is_carousel_item=true" \
-            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
-          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
-          sleep 1
-      - name: Container slide-07
-        id: container07
-        run: |
-          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
-            --data-urlencode "image_url=https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-07.jpg" \
-            --data-urlencode "is_carousel_item=true" \
-            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
-          echo "id=$(echo $RESULT | python3 -c \"import sys,json; print(json.load(sys.stdin)['id'])\")" >> $GITHUB_OUTPUT
-          sleep 1
-      - name: Pausa após containers
-        run: sleep 5
-
-      - name: Criar e publicar carousel
-        run: |
-          CAPTION=$(cat << 'CAPTIONEOF'
-A IA fez-te ser mais produtivo.
-
-Mas recebeste algo em troca?
-
-Um estudo da Fortune (Março 2026) revelou algo que já muitos suspeitavam: os executivos admitem que os ganhos de produtividade gerados pela IA estão a ser absorvidos como mais trabalho atribuído — não em menos horas, não em aumentos salariais.
-
-A matemática é simples:
-→ Usas IA → ficas 2x mais rápido
-→ Gestor vê o resultado → ajusta expectativas
-→ Recebes o dobro do trabalho pelo mesmo preço
-
-A empresa ficou com o ganho. Tu ficaste igual.
-
-A excepção? Quem usa IA por conta própria. Freelancers e empreendedores que controlam a ferramenta ficam com o benefício.
-
-A questão não é "como uso IA no trabalho".
-
-É "como uso IA para mim".
-
-Já sentiste isto? Conta nos comentários 👇
-#IA #Produtividade #Trabalho #Empreendedorismo #EterGrowth #AITools #FuturoDoTrabalho
-CAPTIONEOF
-)
-          CHILDREN="${{ steps.container01.outputs.id }},${{ steps.container02.outputs.id }},${{ steps.container03.outputs.id }},${{ steps.container04.outputs.id }},${{ steps.container05.outputs.id }},${{ steps.container06.outputs.id }},${{ steps.container07.outputs.id }}"
-          RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media" \
-            --data-urlencode "media_type=CAROUSEL" \
-            --data-urlencode "children=$CHILDREN" \
-            --data-urlencode "caption=$CAPTION" \
-            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
-          CONTAINER_ID=$(echo $RESULT | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
-          echo "Container ID: $CONTAINER_ID"
+          set -e
+          echo "🎠 A publicar carousel-06-ia-produtividade-salario"
+          
+          # Image URLs
+          URLS="https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-01.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-02.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-03.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-04.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-05.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-06.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-06-ia-produtividade-salario/slide-07.jpg"
+          
+          # Create image containers
+          CONTAINER_IDS=""
+          for URL in $URLS; do
+            RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/$IG_USER/media" \
+              --data-urlencode "image_url=$URL" \
+              --data-urlencode "is_carousel_item=true" \
+              --data-urlencode "access_token=$IG_TOKEN")
+            CID=$(echo "$RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+            echo "  Container: $CID"
+            CONTAINER_IDS="$CONTAINER_IDS,$CID"
+            sleep 1
+          done
+          CONTAINER_IDS="${CONTAINER_IDS#,}"  # remove leading comma
+          
           sleep 5
-          PUBLISH=$(curl -sf -X POST "https://graph.facebook.com/v21.0/${{ secrets.INSTAGRAM_USER_ID }}/media_publish" \
-            --data-urlencode "creation_id=$CONTAINER_ID" \
-            --data-urlencode "access_token=${{ secrets.INSTAGRAM_TOKEN }}")
-          POST_ID=$(echo $PUBLISH | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
-          echo "✅ Publicado! Post ID: $POST_ID"
+          
+          # Read caption
+          CAPTION=$(cat "carousels/2026-03-18/carousel-06-ia-produtividade-salario/caption.txt")
+          
+          # Create carousel container
+          CAROUSEL=$(curl -sf -X POST "https://graph.facebook.com/v21.0/$IG_USER/media" \
+            --data-urlencode "media_type=CAROUSEL" \
+            --data-urlencode "children=$CONTAINER_IDS" \
+            --data-urlencode "caption=$CAPTION" \
+            --data-urlencode "access_token=$IG_TOKEN")
+          CAROUSEL_ID=$(echo "$CAROUSEL" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+          echo "  Carousel container: $CAROUSEL_ID"
+          
+          sleep 5
+          
+          # Publish
+          PUBLISH=$(curl -sf -X POST "https://graph.facebook.com/v21.0/$IG_USER/media_publish" \
+            --data-urlencode "creation_id=$CAROUSEL_ID" \
+            --data-urlencode "access_token=$IG_TOKEN")
+          POST_ID=$(echo "$PUBLISH" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+          echo "✅ Post publicado! ID: $POST_ID"
           echo "🔗 https://www.instagram.com/p/$POST_ID/"
