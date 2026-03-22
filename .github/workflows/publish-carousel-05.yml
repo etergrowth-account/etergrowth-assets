@@ -2,28 +2,65 @@ name: Publish Carousel 05 - gemini-31-pro
 
 on:
   schedule:
-    - cron: "47 14 23 3 *"
+    - cron: "0 9 23 3 *"
   workflow_dispatch:
 
 jobs:
   publish:
     runs-on: ubuntu-latest
+    timeout-minutes: 480
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Publish carousel to Instagram
+      - name: Random wait then publish
         env:
           IG_TOKEN: ${{ secrets.INSTAGRAM_TOKEN }}
           IG_USER: ${{ secrets.INSTAGRAM_USER_ID }}
         run: |
           set -e
-          echo "🎠 A publicar carousel-05-gemini-31-pro"
+          
+          # ── Janela aleatória: 9:30 a 17:00 Lisboa (UTC+0 em Março) ──
+          # Gerar hora alvo: random entre 570 (9h30) e 1020 (17h00) minutos desde meia-noite
+          TARGET_MIN=$(( 570 + RANDOM % 451 ))
+          TARGET_H=$(( TARGET_MIN / 60 ))
+          TARGET_M=$(( TARGET_MIN % 60 ))
+          echo "🎲 Hora alvo gerada: $(printf '%02d:%02d' $TARGET_H $TARGET_M) UTC"
+          
+          # Deadline de segurança: 5h55m após arranque (evita kill do GitHub)
+          JOB_START=$(date +%s)
+          DEADLINE=$(( JOB_START + 21300 ))
+          
+          # Loop: verificar o relógio de 5 em 5 minutos
+          while true; do
+            NOW=$(date +%s)
+            NOW_H=$(date -u +%H)
+            NOW_M=$(date -u +%M)
+            NOW_MIN=$(( NOW_H * 60 + NOW_M ))
+            
+            echo "⏱  Agora: $(printf '%02d:%02d' $NOW_H $NOW_M) | Alvo: $(printf '%02d:%02d' $TARGET_H $TARGET_M)"
+            
+            # Publicar se chegou à hora alvo
+            if [ $NOW_MIN -ge $TARGET_MIN ]; then
+              echo "✅ Hora alvo atingida — a publicar!"
+              break
+            fi
+            
+            # Publicar se chegou ao deadline de segurança
+            if [ $NOW -ge $DEADLINE ]; then
+              echo "⚠️ Deadline de segurança atingido — a publicar agora"
+              break
+            fi
+            
+            sleep 300
+          done
+          
+          echo "🎠 A publicar carousel-05-gemini-31-pro..."
           
           # Image URLs
           URLS="https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-01.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-02.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-03.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-04.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-05.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-06.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-05-gemini-31-pro/slide-07.jpg"
           
-          # Create image containers
+          # Criar containers de imagem
           CONTAINER_IDS=""
           for URL in $URLS; do
             RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/$IG_USER/media" \
@@ -31,32 +68,29 @@ jobs:
               --data-urlencode "is_carousel_item=true" \
               --data-urlencode "access_token=$IG_TOKEN")
             CID=$(echo "$RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
-            echo "  Container: $CID"
             CONTAINER_IDS="$CONTAINER_IDS,$CID"
             sleep 1
           done
-          CONTAINER_IDS="${CONTAINER_IDS#,}"  # remove leading comma
+          CONTAINER_IDS="${CONTAINER_IDS#,}"
           
           sleep 5
           
-          # Read caption
           CAPTION=$(cat "carousels/2026-03-18/carousel-05-gemini-31-pro/caption.txt")
           
-          # Create carousel container
+          # Criar carousel container
           CAROUSEL=$(curl -sf -X POST "https://graph.facebook.com/v21.0/$IG_USER/media" \
             --data-urlencode "media_type=CAROUSEL" \
             --data-urlencode "children=$CONTAINER_IDS" \
             --data-urlencode "caption=$CAPTION" \
             --data-urlencode "access_token=$IG_TOKEN")
           CAROUSEL_ID=$(echo "$CAROUSEL" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
-          echo "  Carousel container: $CAROUSEL_ID"
           
           sleep 5
           
-          # Publish
+          # Publicar
           PUBLISH=$(curl -sf -X POST "https://graph.facebook.com/v21.0/$IG_USER/media_publish" \
             --data-urlencode "creation_id=$CAROUSEL_ID" \
             --data-urlencode "access_token=$IG_TOKEN")
           POST_ID=$(echo "$PUBLISH" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
-          echo "✅ Post publicado! ID: $POST_ID"
+          echo "✅ Publicado às $(date -u +%H:%M) UTC! Post ID: $POST_ID"
           echo "🔗 https://www.instagram.com/p/$POST_ID/"
