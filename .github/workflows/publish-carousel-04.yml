@@ -1,96 +1,69 @@
 name: Publish Carousel 04 - quitgpt-pentagono
-
 on:
   schedule:
-    - cron: "0 9 23 3 *"
+    - cron: "23 11 23 3 *"
   workflow_dispatch:
-
 jobs:
   publish:
     runs-on: ubuntu-latest
-    timeout-minutes: 480
+    timeout-minutes: 10
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Random wait then publish
+      - name: Publish carousel
         env:
           IG_TOKEN: ${{ secrets.INSTAGRAM_TOKEN }}
           IG_USER: ${{ secrets.INSTAGRAM_USER_ID }}
         run: |
           set -e
-          
-          # ── Janela aleatória: 9:30 a 17:00 Lisboa (UTC+0 em Março) ──
-          # Gerar hora alvo: random entre 570 (9h30) e 1020 (17h00) minutos desde meia-noite
-          TARGET_MIN=$(( 570 + RANDOM % 451 ))
-          TARGET_H=$(( TARGET_MIN / 60 ))
-          TARGET_M=$(( TARGET_MIN % 60 ))
-          echo "🎲 Hora alvo gerada: $(printf '%02d:%02d' $TARGET_H $TARGET_M) UTC"
-          
-          # Deadline de segurança: 5h55m após arranque (evita kill do GitHub)
-          JOB_START=$(date +%s)
-          DEADLINE=$(( JOB_START + 21300 ))
-          
-          # Loop: verificar o relógio de 5 em 5 minutos
-          while true; do
-            NOW=$(date +%s)
-            NOW_H=$(date -u +%H)
-            NOW_M=$(date -u +%M)
-            NOW_MIN=$(( NOW_H * 60 + NOW_M ))
-            
-            echo "⏱  Agora: $(printf '%02d:%02d' $NOW_H $NOW_M) | Alvo: $(printf '%02d:%02d' $TARGET_H $TARGET_M)"
-            
-            # Publicar se chegou à hora alvo
-            if [ $NOW_MIN -ge $TARGET_MIN ]; then
-              echo "✅ Hora alvo atingida — a publicar!"
-              break
-            fi
-            
-            # Publicar se chegou ao deadline de segurança
-            if [ $NOW -ge $DEADLINE ]; then
-              echo "⚠️ Deadline de segurança atingido — a publicar agora"
-              break
-            fi
-            
-            sleep 300
+          CAROUSEL_DIR="carousels/2026-03-18-carrossel-ia/carousel-04"
+          echo "📸 Carousel 04 — quitgpt-pentagono"
+          echo "🕐 Hora: 11:23 UTC"
+
+          # Read caption
+          CAPTION=$(cat "${CAROUSEL_DIR}/caption.txt")
+
+          # Collect image URLs
+          REPO="etergrowth-account/etergrowth-assets"
+          BASE_URL="https://raw.githubusercontent.com/${REPO}/main"
+          IMAGES=()
+          for img in $(ls ${CAROUSEL_DIR}/slide-*.jpg | sort); do
+            FILENAME=$(basename $img)
+            IMAGES+=("${BASE_URL}/${CAROUSEL_DIR}/${FILENAME}")
           done
-          
-          echo "🎠 A publicar carousel-04-quitgpt-pentagono..."
-          
-          # Image URLs
-          URLS="https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-04-quitgpt-pentagono/slide-01.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-04-quitgpt-pentagono/slide-02.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-04-quitgpt-pentagono/slide-03.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-04-quitgpt-pentagono/slide-04.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-04-quitgpt-pentagono/slide-05.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-04-quitgpt-pentagono/slide-06.jpg https://raw.githubusercontent.com/etergrowth-account/etergrowth-assets/main/carousels/2026-03-18/carousel-04-quitgpt-pentagono/slide-07.jpg"
-          
-          # Criar containers de imagem
-          CONTAINER_IDS=""
-          for URL in $URLS; do
-            RESULT=$(curl -sf -X POST "https://graph.facebook.com/v21.0/$IG_USER/media" \
-              --data-urlencode "image_url=$URL" \
-              --data-urlencode "is_carousel_item=true" \
-              --data-urlencode "access_token=$IG_TOKEN")
-            CID=$(echo "$RESULT" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
-            CONTAINER_IDS="$CONTAINER_IDS,$CID"
-            sleep 1
+          echo "📁 ${#IMAGES[@]} slides"
+
+          # Create image containers
+          CONTAINER_IDS=()
+          for URL in "${IMAGES[@]}"; do
+            RESULT=$(curl -s -X POST "https://graph.facebook.com/v21.0/${IG_USER}/media" \
+              -d "image_url=${URL}" \
+              -d "is_carousel_item=true" \
+              -d "access_token=${IG_TOKEN}")
+            ID=$(echo $RESULT | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+            CONTAINER_IDS+=($ID)
+            echo "  Container: $ID"
+            sleep 2
           done
-          CONTAINER_IDS="${CONTAINER_IDS#,}"
-          
+
           sleep 5
-          
-          CAPTION=$(cat "carousels/2026-03-18/carousel-04-quitgpt-pentagono/caption.txt")
-          
-          # Criar carousel container
-          CAROUSEL=$(curl -sf -X POST "https://graph.facebook.com/v21.0/$IG_USER/media" \
-            --data-urlencode "media_type=CAROUSEL" \
-            --data-urlencode "children=$CONTAINER_IDS" \
-            --data-urlencode "caption=$CAPTION" \
-            --data-urlencode "access_token=$IG_TOKEN")
-          CAROUSEL_ID=$(echo "$CAROUSEL" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
-          
+
+          # Create carousel container
+          CHILDREN=$(IFS=,; echo "${CONTAINER_IDS[*]}")
+          CAROUSEL=$(curl -s -X POST "https://graph.facebook.com/v21.0/${IG_USER}/media" \
+            --data-urlencode "caption=${CAPTION}" \
+            -d "media_type=CAROUSEL" \
+            -d "children=${CHILDREN}" \
+            -d "access_token=${IG_TOKEN}")
+          CAROUSEL_ID=$(echo $CAROUSEL | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+          echo "🎠 Carousel container: ${CAROUSEL_ID}"
+
           sleep 5
-          
-          # Publicar
-          PUBLISH=$(curl -sf -X POST "https://graph.facebook.com/v21.0/$IG_USER/media_publish" \
-            --data-urlencode "creation_id=$CAROUSEL_ID" \
-            --data-urlencode "access_token=$IG_TOKEN")
-          POST_ID=$(echo "$PUBLISH" | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
-          echo "✅ Publicado às $(date -u +%H:%M) UTC! Post ID: $POST_ID"
-          echo "🔗 https://www.instagram.com/p/$POST_ID/"
+
+          # Publish
+          PUBLISH=$(curl -s -X POST "https://graph.facebook.com/v21.0/${IG_USER}/media_publish" \
+            -d "creation_id=${CAROUSEL_ID}" \
+            -d "access_token=${IG_TOKEN}")
+          POST_ID=$(echo $PUBLISH | python3 -c "import sys,json; print(json.load(sys.stdin)['id'])")
+          echo "✅ Publicado! ID: ${POST_ID}"
+
