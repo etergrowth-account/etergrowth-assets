@@ -16,7 +16,7 @@ jobs:
           IG_USER: ${{ secrets.INSTAGRAM_USER_ID }}
         run: |
           set -e
-          CAROUSEL_DIR="carousels/2026-03-18-carrossel-ia/carousel-04"
+          CAROUSEL_DIR="carousels/2026-03-18/carousel-04-quitgpt-pentagono"
           echo "📸 Carousel 04 — quitgpt-pentagono"
           echo "🕐 Hora: 11:23 UTC"
 
